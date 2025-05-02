@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Play Store Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f1f1f1;
+      text-align: center;
+    }
+    .button-group {
+      margin: 20px 0;
+    }
+    .button-group button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .button-group button:hover {
+      background-color: #45a049;
+    }
+    .chart-container {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    canvas {
+      margin: auto;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📊 Play Store Analytics Dashboard</h1>
+
+<div class="button-group">
+  <button onclick="showChart('wordcloud')">Word Cloud</button>
+  <button onclick="showChart('barchart')">Bar Chart</button>
+  <button onclick="showChart('bubblechart')">Bubble Chart</button>
+</div>
+
+<div class="chart-container">
+  <!-- Word Cloud -->
+  <div id="wordcloud" style="display:block;">
+    <canvas id="wordcloud-canvas" width="600" height="600"></canvas>
+  </div>
+
+  <!-- Bar Chart -->
+  <div id="barchart" style="display:none;">
+    <div id="bar-chart" style="width:600px; height:400px;"></div>
+  </div>
+
+  <!-- Bubble Chart -->
+  <div id="bubblechart" style="display:none;">
+    <div id="bubble-chart" style="width:600px; height:400px;"></div>
+  </div>
+</div>
+
+<script>
+function showChart(chartId) {
+  document.getElementById('wordcloud').style.display = 'none';
+  document.getElementById('barchart').style.display = 'none';
+  document.getElementById('bubblechart').style.display = 'none';
+  document.getElementById(chartId).style.display = 'block';
+}
+
+// Word Cloud
+WordCloud(document.getElementById('wordcloud-canvas'), {
+  list: [
+    ['Health', 50],
+    ['Fitness', 40],
+    ['Workout', 35],
+    ['Exercise', 30],
+    ['Wellness', 25],
+    ['Yoga', 20],
+    ['Meditation', 18],
+    ['Diet', 15],
+    ['Strength', 12],
+    ['Running', 10]
+  ],
+  gridSize: 8,
+  weightFactor: 6,
+  fontFamily: 'Roboto',
+  color: function () {
+    var colors = ['#00CFFF', '#5F27CD', '#833471'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  },
+  backgroundColor: '#ffffff',
+  shape: 'heart'
+});
+
+// Bar Chart
+var barData = [{
+  x: ['Category 1', 'Category 2', 'Category 3', 'Category 4', 'Category 5'],
+  y: [120, 150, 100, 200, 180],
+  type: 'bar',
+  marker: {color: '#4CAF50'}
+}];
+var barLayout = {
+  title: 'Top App Categories',
+  xaxis: {title: 'Category'},
+  yaxis: {title: 'Ratings + Reviews'}
+};
+Plotly.newPlot('bar-chart', barData, barLayout);
+
+// Bubble Chart
+var bubbleData = [{
+  x: [30, 40, 50, 60, 70],
+  y: [4.5, 4.7, 4.8, 4.2, 4.6],
+  mode: 'markers',
+  marker: {
+    size: [100, 200, 300, 400, 500],
+    color: ['#00CFFF', '#5F27CD', '#833471', '#4CAF50', '#F4511E']
+  }
+}];
+var bubbleLayout = {
+  title: 'App Size vs Rating',
+  xaxis: {title: 'App Size (MB)'},
+  yaxis: {title: 'Rating'}
+};
+Plotly.newPlot('bubble-chart', bubbleData, bubbleLayout);
+
+</script>
+
+</body>
+</html>
