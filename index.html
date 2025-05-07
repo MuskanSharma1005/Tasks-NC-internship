@@ -1,4 +1,9 @@
+from IPython.display import display, HTML
+import webbrowser
+import os
 
+# Final Dashboard HTML
+html_code = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,22 +18,45 @@
       padding: 20px;
       background: #f1f1f1;
       text-align: center;
+      transition: background-color 0.3s, color 0.3s;
+      cursor: url('https://cdn.jsdelivr.net/npm/@iconify/icons-flat-color-icons:mouse'), auto;
+    }
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
     }
     .button-group {
       margin: 20px 0;
     }
     .button-group button {
       margin: 5px;
-      padding: 10px 20px;
+      padding: 12px 24px;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     }
     .button-group button:hover {
       background-color: #45a049;
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .button-group button:active {
+      background-color: #388E3C;
+      transform: scale(0.98);
+    }
+    .button-group button#toggle-dark-mode {
+      background-color: #2196F3;
+    }
+    .button-group button#toggle-dark-mode:hover {
+      background-color: #1976D2;
     }
     .chart-container {
       margin-top: 20px;
@@ -36,10 +64,32 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+    .chart-container:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      transform: translateY(-5px);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     canvas {
       margin: auto;
       display: block;
+    }
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .button-group button {
+        padding: 10px 20px;
+      }
+      .chart-container {
+        width: 90%;
+      }
     }
   </style>
 </head>
@@ -52,6 +102,7 @@
   <button onclick="showChart('wordcloud')">Word Cloud</button>
   <button onclick="showChart('barchart')">Bar Chart</button>
   <button onclick="showChart('bubblechart')">Bubble Chart</button>
+  <button id="toggle-dark-mode" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 </div>
 
 <div class="chart-container">
@@ -73,10 +124,15 @@
 
 <script>
 function showChart(chartId) {
-  document.getElementById('wordcloud').style.display = 'none';
-  document.getElementById('barchart').style.display = 'none';
-  document.getElementById('bubblechart').style.display = 'none';
-  document.getElementById(chartId).style.display = 'block';
+  const charts = ['wordcloud', 'barchart', 'bubblechart'];
+  charts.forEach(chart => {
+    document.getElementById(chart).style.display = chart === chartId ? 'block' : 'none';
+  });
+}
+
+// Dark Mode Toggle
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
 }
 
 // Word Cloud
@@ -114,7 +170,8 @@ var barData = [{
 var barLayout = {
   title: 'Top App Categories',
   xaxis: {title: 'Category'},
-  yaxis: {title: 'Ratings + Reviews'}
+  yaxis: {title: 'Ratings + Reviews'},
+  hovermode: 'closest',
 };
 Plotly.newPlot('bar-chart', barData, barLayout);
 
@@ -131,7 +188,8 @@ var bubbleData = [{
 var bubbleLayout = {
   title: 'App Size vs Rating',
   xaxis: {title: 'App Size (MB)'},
-  yaxis: {title: 'Rating'}
+  yaxis: {title: 'Rating'},
+  hovermode: 'closest',
 };
 Plotly.newPlot('bubble-chart', bubbleData, bubbleLayout);
 
@@ -139,3 +197,18 @@ Plotly.newPlot('bubble-chart', bubbleData, bubbleLayout);
 
 </body>
 </html>
+"""
+
+# Saving and opening logic
+html_files_path = os.path.join(os.getcwd(), 'html_files')
+if not os.path.exists(html_files_path):
+    os.makedirs(html_files_path)
+
+dashboard_path = os.path.join(html_files_path, "playstore_dashboard.html")
+
+with open(dashboard_path, "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+webbrowser.open('file://' + os.path.realpath(dashboard_path))
+
+display(HTML(html_code))
